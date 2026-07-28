@@ -96,6 +96,17 @@
                     ToolTip="{x:Static resx:ResUI.menuMixedTestServer}">
                     <materialDesign:PackIcon VerticalAlignment="Center" Kind="Speedometer" />
                 </Button>
+                <Button
+                    x:Name="btnSmartScanner"
+                    Width="30"
+                    Height="30"
+                    Margin="{StaticResource MarginLeftRight4}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniLightButton}"
+                    ToolTip="Smart Scanner">
+                    <materialDesign:PackIcon
+                    VerticalAlignment="Center"
+                    Kind="Radar" />
+                </Button>
             </WrapPanel>
             <DataGrid
                 x:Name="lstProfiles"
