@@ -272,6 +272,12 @@ public class SpeedtestService(Config config, Func<SpeedTestResult, Task> updateF
         }
         return true;
     }
+    public async Task<bool> RunRealPingForSmartScannerAsync(List<ServerTestItem> servers)
+    {
+        var exitKey = Guid.NewGuid().ToString();
+
+        return await RunRealPingAsync(servers, exitKey);
+    }
 
     private async Task RunUdpTestBatchAsync(List<ServerTestItem> lstSelected, string exitLoopKey, int pageSize = 0)
     {
