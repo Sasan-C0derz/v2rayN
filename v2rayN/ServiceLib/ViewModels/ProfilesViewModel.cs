@@ -65,7 +65,7 @@ public class ProfilesViewModel : MyReactiveObject
     public ReactiveCommand<Unit, Unit> SortServerResultCmd { get; }
     public ReactiveCommand<Unit, Unit> RemoveInvalidServerResultCmd { get; }
     public ReactiveCommand<Unit, Unit> FastRealPingCmd { get; }
-
+    public ReactiveCommand<Unit, Unit> SmartScannerCmd { get; }
     //servers export
     public ReactiveCommand<Unit, Unit> Export2ClientConfigCmd { get; }
 
@@ -167,6 +167,10 @@ public class ProfilesViewModel : MyReactiveObject
         FastRealPingCmd = ReactiveCommand.CreateFromTask(async () =>
         {
             await ServerSpeedtest(ESpeedActionType.FastRealping);
+        });
+        SmartScannerCmd = ReactiveCommand.CreateFromTask(async () =>
+        {
+            await SmartScannerAsync();
         });
         MixedTestServerCmd = ReactiveCommand.CreateFromTask(async () =>
         {
@@ -730,7 +734,8 @@ public class ProfilesViewModel : MyReactiveObject
                 actionType = ESpeedActionType.Realping;
             }
 
-            lstSelected = JsonUtils.Deserialize<List<ProfileItem>>(JsonUtils.Serialize(ProfileItems?.OrderBy(t => t.Sort)));
+            lstSelected = JsonUtils.Deserialize<List<ProfileItem>>(
+                JsonUtils.Serialize(ProfileItems?.OrderBy(t => t.Sort)));
         }
         else
         {
@@ -749,15 +754,32 @@ public class ProfilesViewModel : MyReactiveObject
                 _ = SetSpeedTestResult(result);
                 return Disposable.Empty;
             });
+
             await Task.CompletedTask;
         });
+
         _speedtestService?.RunLoop(actionType, lstSelected);
+    }
+
+    private async Task SmartScannerAsync()
+    {
+        if (ProfileItems.Count == 0)
+        {
+            NoticeManager.Instance.Enqueue("No servers found. Please add a server first.");
+            return;
+        }
+
+        NoticeManager.Instance.Enqueue("Smart Scanner started.");
+
+        await ServerSpeedtest(ESpeedActionType.Realping);
     }
 
     public void ServerSpeedtestStop()
     {
         _speedtestService?.ExitLoop();
     }
+
+  
 
     private async Task Export2ClientConfigAsync(bool blClipboard)
     {
